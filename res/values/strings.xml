@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">White Tooth</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="splash_header_text">INFORMED CUSTOMER CONSENT FOR TEETH \n WHITENING TREATMENT</string>
+    <string name="tutorial1">This app works best in a room not heavily lit. For best results, it might be helpful to dim your room lights so they don’t overpower the blue light from your phone during your 60 minute whitening session.</string>
+    <string name="tutorial5">When finished, teeth should be completely visible. If you experience discomfort, try adding a very small amount of Vaseline on the side (of where) to make it more comfortable.</string>
+    <string name="tutorial3">Inserting cheek retractor Slip the left side of the mouth onto the smooth round groove on one side of the cheek retractor.</string>
+    <string name="tutorial2">Hold the cheek retractor in a vertical position with the semi-circle pointing toward the ground and the side that has the curved flanges toward the face.</string>
+    <string name="tutorial4">Now slip the right side of the mouth onto the other side of the cheek retractor.</string>
+    <string name="new_tutorial_2">You’ll want to use a room where you can dim the lights. It is important you don’t drown out the blue light from your phone during the session.</string>
+    <string name="crop__saving">Saving picture…</string>
+    <string name="crop__wait">Please wait…</string>
+    <string name="crop__pick_error">No image sources available</string>
+    <string name="crop__done">DONE</string>
+    <string name="crop__cancel">CANCEL</string>
+
+</resources>
