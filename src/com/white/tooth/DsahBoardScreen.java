@@ -11,6 +11,8 @@ import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.white.tooth.dlg.DlgToothShade;
+import com.white.tooth.dlg.DlgToothShade.OnToothShadeDialogClickListener;
 import com.white.tooth.util.IabHelper;
 import com.white.tooth.util.IabHelper.OnIabPurchaseFinishedListener;
 import com.white.tooth.util.IabHelper.QueryInventoryFinishedListener;
@@ -18,7 +20,7 @@ import com.white.tooth.util.IabResult;
 import com.white.tooth.util.Inventory;
 import com.white.tooth.util.Purchase;
 
-public class DsahBoardScreen extends BaseActivity implements OnClickListener {
+public class DsahBoardScreen extends BaseActivity implements OnClickListener,OnToothShadeDialogClickListener {
 	private static final String TAG = "paymentExample";
 	private LinearLayout ll_tutorial, ll_history, ll_refill, ll_session, ll_live_support;
 	private TextView tv_tutorial, tv_history, tv_session, tv_refill, tv_live_support;
@@ -40,6 +42,7 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener {
 	public OnIabPurchaseFinishedListener mPurchaseFinishedListener;
 
 	static final int RC_REQUEST = 10001;
+	static final int REQUEST_IMAGE_CAPTURE = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -154,9 +157,10 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener {
 
 			break;
 		case R.id.ll_session:
-
-			i = new Intent(getApplicationContext(), TimerActivity.class);
-			startActivity(i);
+			
+			new DlgToothShade(this, this).show();
+			
+			
 
 			break;
 		case R.id.ll_refill:
@@ -228,10 +232,8 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener {
 
 	@Override
 	public void onBackPressed() {
-		Log.e("!!ffffffffffffffffffffffff here", "reach here" + Constant.isRunning);
-
+		
 		if (Constant.isRunning) {
-			Log.e("!!ffffffffffffffffffffffff here", "reach here");
 			handler.removeCallbacks(runnable);
 		}
 		Constant.isDialogOpen = false;
@@ -242,6 +244,11 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		
+		if(requestCode == 101){
+			
+		}
+		
 		if (mHelper == null)
 			return;
 
@@ -252,15 +259,30 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener {
 
 	
 
+
 	@Override
 	public void onDestroy() {
-		// Stop service when done
 		Log.d(TAG, "Destroying helper.");
 		if (mHelper != null) {
 			mHelper.dispose();
 			mHelper = null;
 		}
 		super.onDestroy();
+	}
+
+	@Override
+	public void onYesButtonClick() {
+		Intent i1 = new Intent(getApplicationContext(), ToothShadeActivity.class);
+		i1.putExtra("val", 1);
+		startActivityForResult(i1, 201);
+		
+	}
+
+	@Override
+	public void onNoButtonClick() {
+		Intent i1 = new Intent(getApplicationContext(), TimerActivity.class);
+		startActivity(i1);
+		
 	}
 
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.white.tooth"
-     android:versionCode="7"
+    android:versionCode="7"
     android:versionName="1.6" >
 
     <uses-sdk
@@ -19,6 +19,7 @@
         android:icon="@drawable/app_logo"
         android:label="@string/app_name"
         android:largeHeap="true"
+        android:name="com.white.tooth.application.WhiteToothApp"
         android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
         android:vmSafeMode="true" >
         <activity
@@ -89,6 +90,10 @@
         </activity>
         <activity
             android:name="com.white.tooth.PaypalActivity"
+            android:screenOrientation="landscape" >
+        </activity>
+        <activity
+            android:name="com.white.tooth.ToothShadeActivity"
             android:screenOrientation="landscape" >
         </activity>
 
