@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -12,13 +13,16 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class ToothShadeActivity extends BaseActivity {
+import com.white.tooth.dlg.DlgToothShadeCompare;
+import com.white.tooth.dlg.DlgToothShadeCompare.OnToothShadeCompareDialogClickListener;
+
+public class ToothShadeActivity extends BaseActivity implements OnToothShadeCompareDialogClickListener {
 	private LinearLayout ll_table_pic_btn, ll_camera, ll_shade, ll_shade_sample;
 	private Button btn_take_pic, btn_yes, btn_no, btn_save_tooth_shade;
 	private int callFrom;
@@ -41,7 +45,7 @@ public class ToothShadeActivity extends BaseActivity {
 		ll_shade_sample = (LinearLayout) findViewById(R.id.ll_shade_sample);
 		onLayoutVisibility(1);
 		for(int i=0;i<20; i++){
-			ll_shade_sample.addView(addtoothShade(i+1));
+			ll_shade_sample.addView(addtoothShade(i));
 		}
 		
 		Bundle bundle = getIntent().getExtras();
@@ -67,14 +71,20 @@ public class ToothShadeActivity extends BaseActivity {
 					Intent returnIntent = new Intent();
 			        setResult(RESULT_OK,returnIntent);     
 			         finish();
-				}	
+				}else{
+					Toast.makeText(getApplicationContext(), "Please select a shade", Toast.LENGTH_LONG).show();
+				}
 			}
 			
 			if(callFrom==2){
 				if(app.getAfterSessionShadeValue()!=0){
-					Intent returnIntent = new Intent();
+					
+					new DlgToothShadeCompare(this, this).show();
+					/*Intent returnIntent = new Intent();
 			        setResult(RESULT_OK,returnIntent);     
-			         finish();
+			         finish();*/
+				}else{
+					Toast.makeText(getApplicationContext(), "Please select a shade", Toast.LENGTH_LONG).show();
 				}	
 			}
 			
@@ -87,7 +97,7 @@ public class ToothShadeActivity extends BaseActivity {
 	public void callCamera() {
 
 		Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-		File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/DCIM/.wt/" + "img.jpg");
+		File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/DCIM/" + "img.jpg");
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
 		startActivityForResult(intent, 1);
 	}
@@ -96,17 +106,17 @@ public class ToothShadeActivity extends BaseActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK && requestCode == 1) {
-			final File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/DCIM/.wt/" + "img.jpg");
+			final File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/DCIM/" + "img.jpg");
 			cropCapturedImage(Uri.fromFile(file));
 
 		}
-		if (requestCode == 2) {
+		if (requestCode == 2 && data!=null) {
 			onLayoutVisibility(2);
 			Bundle extras = data.getExtras();
 			Bitmap thePic = extras.getParcelable("data");
 			((ImageView) findViewById(R.id.iv_capture_image)).setImageBitmap(thePic);
 			((ImageView) findViewById(R.id.iv_shade_image)).setImageBitmap(thePic);
-			String root = Environment.getExternalStorageDirectory().getAbsolutePath() + "/DCIM/.wt/";
+			String root = Environment.getExternalStorageDirectory().getAbsolutePath() + "/DCIM/";
 			File newDir = new File(root);
 			newDir.mkdirs();
 			String fotoname = "img.jpg";
@@ -163,7 +173,7 @@ public class ToothShadeActivity extends BaseActivity {
 		
 		v = View.inflate(getApplicationContext(), R.layout.row_shade, null);
 		
-		ImageView imageView  = (ImageView)v.findViewById(R.id.iv_shade_sample);
+		final ImageView imageView  = (ImageView)v.findViewById(R.id.iv_shade_sample);
 		final TextView tv  = (TextView)v.findViewById(R.id.tv_shade_number);
 				
 		if(i==0){
@@ -233,12 +243,35 @@ public class ToothShadeActivity extends BaseActivity {
 			@Override
 			public void onClick(View arg0) {
 				
+				for(int i=0; i<ll_shade_sample.getChildCount(); i++){
+					View v1 = ll_shade_sample.getChildAt(i);
+					ImageView iv = (ImageView)v1.findViewById(R.id.iv_shade_sample);
+					if(Integer.parseInt( tv.getText().toString().trim())== (i+1)){
+						iv.setBackgroundColor(Color.BLACK);
+					}else{
+						iv.setBackgroundColor(Color.parseColor("#540F38"));
+					}
+				}
+				
 				String val = tv.getText().toString().trim();
 				System.out.println("!!! "+val);
-				app.setBeforeSessionShadeValue(Integer.parseInt(val));
+				if(callFrom == 1){
+					app.setBeforeSessionShadeValue(Integer.parseInt(val));
+				}else{
+					app.setAfterSessionShadeValue(Integer.parseInt(val));
+				}
+				
 			}
 		});
 		return v;
+		
+	}
+
+	@Override
+	public void onOkButtonClick() {
+		Intent returnIntent = new Intent();
+        setResult(RESULT_OK,returnIntent);     
+         finish();
 		
 	}
 

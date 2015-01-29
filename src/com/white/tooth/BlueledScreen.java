@@ -131,12 +131,13 @@ public class BlueledScreen extends BaseActivity implements OnClickListener, OnSe
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.dismiss();
 							insertValue("" + countervalue_save);
-							finish();
-							/*
-							 * Intent i = new Intent(); startActivity(i);
-							 */
-							//
-							// dialogShow();
+							if(app.isShadeActive()){
+								showshade();
+							}else{
+								finish();
+							}
+							
+							
 						}
 					}).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
@@ -147,13 +148,9 @@ public class BlueledScreen extends BaseActivity implements OnClickListener, OnSe
 						}
 					}).setIcon(android.R.drawable.ic_dialog_alert).show();
 
-					// finish();
+					
 				}
-				/*
-				 * if (idle >= ( 1000 * 30)) {
-				 * handler.removeCallbacks(runnable);
-				 * insertValue(""+countervalue); }
-				 */
+				
 			}
 		};
 		handler.postDelayed(runnable, 1000);
@@ -308,74 +305,17 @@ public class BlueledScreen extends BaseActivity implements OnClickListener, OnSe
 		videoView.start();
 		mc.setVisibility(View.GONE);
 	}
-
-	public void dialogShow() {
-		new AlertDialog.Builder(BlueledScreen.this).setTitle("Capture Image").setMessage("Take a picture of your teeth").setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-				Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-				File file = new File(Environment.getExternalStorageDirectory().toString() + "/DCIM/whitetooth/" + imagename + ".jpg");
-				intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-				startActivityForResult(intent, 1);
-			}
-		}).setNegativeButton("Skip", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-				finish();
-
-			}
-		}).setIcon(android.R.drawable.ic_dialog_alert).show();
-	}
-
-	public void cropCapturedImage(Uri picUri) {
-		Intent cropIntent = new Intent("com.android.camera.action.CROP");
-		cropIntent.setDataAndType(picUri, "image/*");
-		cropIntent.putExtra("crop", "true");
-		cropIntent.putExtra("aspectX", 1);
-		cropIntent.putExtra("aspectY", 1);
-		cropIntent.putExtra("outputX", 256);
-		cropIntent.putExtra("outputY", 256);
-		cropIntent.putExtra("return-data", true);
-		startActivityForResult(cropIntent, 2);
-	}
+	
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == 1) {
-			File file = new File(Environment.getExternalStorageDirectory().toString() + "/DCIM/crop_image/" + imagename + ".jpg");
-			try {
-				cropCapturedImage(Uri.fromFile(file));
-			} catch (ActivityNotFoundException aNFE) {
-				String errorMessage = "Sorry - your device doesn't support the crop action!";
-				Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
-				toast.show();
-			}
-		}
-		if (requestCode == 2 && data != null) {
-			try {
-				Bundle extras = data.getExtras();
-				Bitmap thePic = extras.getParcelable("data");
-				// imVCature_pic.setImageBitmap(thePic);
-				bitmap = thePic;
-				String path = Environment.getExternalStorageDirectory().toString();
-				OutputStream fOut = null;
-				File file = new File(Environment.getExternalStorageDirectory().toString() + "/DCIM/crop_image/" + imagename + ".jpg");
-				fOut = new FileOutputStream(file);
-
-				thePic.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
-				fOut.flush();
-				fOut.close();
-				MediaStore.Images.Media.insertImage(getContentResolver(), file.getAbsolutePath(), file.getName(), file.getName());
-				imageShadeDlg = new ImageShadeDialogTimerEnd(this, bitmap);
-				imageShadeDlg.show();
-
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		super.onActivityResult(requestCode, resultCode, data);		
+		if(requestCode == 202){
+			Intent i1 = new Intent(getApplicationContext(), TimerActivity.class);
+			startActivity(i1);
+			finish();
+		}	
+		
 	}
 
 	public void onShadeClickEnd(int val) {
@@ -400,5 +340,14 @@ public class BlueledScreen extends BaseActivity implements OnClickListener, OnSe
 		
 
 	}
+	
+	public void showshade(){
+		app.setShadeActive(true);
+		Intent i1 = new Intent(getApplicationContext(), ToothShadeActivity.class);
+		i1.putExtra("val", 2);
+		startActivityForResult(i1, 202);
+	}
+	
+	
 
 }

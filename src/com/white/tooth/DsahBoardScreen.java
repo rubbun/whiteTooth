@@ -1,5 +1,7 @@
 package com.white.tooth;
 
+import java.io.Flushable;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -11,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
 import com.white.tooth.dlg.DlgToothShade;
 import com.white.tooth.dlg.DlgToothShade.OnToothShadeDialogClickListener;
 import com.white.tooth.util.IabHelper;
@@ -147,6 +150,7 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener,OnT
 	public void onClick(View arg0) {
 		switch (arg0.getId()) {
 		case R.id.ll_history:
+			FlurryAgent.logEvent("HistoryData");
 			i = new Intent(getApplicationContext(), History.class);
 			startActivity(i);
 			break;
@@ -154,17 +158,20 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener,OnT
 		case R.id.ll_tutorial:
 			i = new Intent(getApplicationContext(), Tutorial.class);
 			startActivity(i);
-
+			FlurryAgent.logEvent("TutorialScreenData");
+			
 			break;
 		case R.id.ll_session:
 			
 			new DlgToothShade(this, this).show();
 			
-			
+			FlurryAgent.logEvent("StartSessionData");
 
 			break;
 		case R.id.ll_refill:
 
+			FlurryAgent.logEvent("BuyStarterKitData");
+			
 			final Dialog dialog = new Dialog(DsahBoardScreen.this);
 			dialog.setTitle("Choose your product option");
 			dialog.setContentView(R.layout.product_purchase_dialog);
@@ -219,6 +226,7 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener,OnT
 			break;
 
 		case R.id.ll_live_support:
+			FlurryAgent.logEvent("LiveSupportData");
 			i = new Intent(getApplicationContext(), SmsActivity.class);
 			startActivity(i);
 			break;
@@ -245,8 +253,9 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener,OnT
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		
-		if(requestCode == 101){
-			
+		if(requestCode == 201){
+			Intent i1 = new Intent(getApplicationContext(), TimerActivity.class);
+			startActivity(i1);
 		}
 		
 		if (mHelper == null)
@@ -272,6 +281,7 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener,OnT
 
 	@Override
 	public void onYesButtonClick() {
+		app.setShadeActive(true);
 		Intent i1 = new Intent(getApplicationContext(), ToothShadeActivity.class);
 		i1.putExtra("val", 1);
 		startActivityForResult(i1, 201);

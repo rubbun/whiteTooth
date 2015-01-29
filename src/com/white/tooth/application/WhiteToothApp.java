@@ -6,6 +6,7 @@ public class WhiteToothApp extends Application{
 	
 	public int beforeSessionShadeValue=0;
 	public int afterSessionShadeValue=0;
+	public boolean isShadeActive = false;
 	
 	@Override
 	public void onCreate() {
@@ -26,6 +27,14 @@ public class WhiteToothApp extends Application{
 
 	public void setAfterSessionShadeValue(int afterSessionShadeValue) {
 		this.afterSessionShadeValue = afterSessionShadeValue;
+	}
+
+	public boolean isShadeActive() {
+		return isShadeActive;
+	}
+
+	public void setShadeActive(boolean isShadeActive) {
+		this.isShadeActive = isShadeActive;
 	}
 	
 	
