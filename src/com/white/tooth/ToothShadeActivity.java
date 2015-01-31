@@ -3,6 +3,8 @@ package com.white.tooth;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -11,11 +13,20 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnDragListener;
+import android.view.View.OnTouchListener;
+import android.widget.AbsoluteLayout;
+import android.widget.AbsoluteLayout.LayoutParams;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,9 +34,21 @@ import com.white.tooth.dlg.DlgToothShadeCompare;
 import com.white.tooth.dlg.DlgToothShadeCompare.OnToothShadeCompareDialogClickListener;
 
 public class ToothShadeActivity extends BaseActivity implements OnToothShadeCompareDialogClickListener {
-	private LinearLayout ll_table_pic_btn, ll_camera, ll_shade, ll_shade_sample;
-	private Button btn_take_pic, btn_yes, btn_no, btn_save_tooth_shade;
+	private LinearLayout ll_table_pic_btn, ll_camera, ll_shade, ll_shade_sample,ll_shade_row;
+	private Button btn_take_pic, btn_yes, btn_no, btn_save_tooth_shade,btn_toggle;
 	private int callFrom;
+	private int whichLayout;
+	private boolean flag = false;
+	private HorizontalScrollView hs_view;
+	private ImageView iv_drag_image;
+	private RelativeLayout rl_drag;
+	int mLayoutLeft,mLayoutTop,mLayoutRight,mLayoutBottom; 
+	int mLayoutWidth,mLayoutHeight;
+	boolean TOUCH_STATUS=false;
+	 private static final String IMAGEVIEW_TAG = "Android Logo";
+	 String msg="";
+	 private AbsoluteLayout aLayout;
+	 private int status=0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +66,12 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
 		btn_save_tooth_shade = (Button) findViewById(R.id.btn_save_tooth_shade);
 		btn_save_tooth_shade.setOnClickListener(this);
 		ll_shade_sample = (LinearLayout) findViewById(R.id.ll_shade_sample);
+		btn_toggle = (Button)findViewById(R.id.btn_toggle);
+		ll_shade_row = (LinearLayout)findViewById(R.id.ll_shade_row);
+		btn_toggle.setOnClickListener(this);
+		hs_view = (HorizontalScrollView)findViewById(R.id.hs_view);
 		onLayoutVisibility(1);
+		whichLayout = 1;
 		for(int i=0;i<20; i++){
 			ll_shade_sample.addView(addtoothShade(i));
 		}
@@ -52,6 +80,50 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
 		if(bundle!=null){
 			callFrom = bundle.getInt("val");
 		}
+		iv_drag_image = (ImageView)findViewById(R.id.iv_drag_image);
+		iv_drag_image.setTag(IMAGEVIEW_TAG);
+		rl_drag =(RelativeLayout)findViewById(R.id.rl_drag);
+		aLayout= (AbsoluteLayout)findViewById(R.id.absLayout);
+		getDimensions();
+		
+
+		iv_drag_image.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+
+			status=1;
+			Log.i("ImageStatus",""+status);
+			//img.setBackgroundColor(Color.WHITE);
+
+			return false;
+			}
+			});
+			aLayout.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+			// TODO Auto-generated method stub
+			Log.i("touch",""+event);
+
+			if(status==1) // any event from down and move
+			{
+			@SuppressWarnings("deprecation")
+			int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 100, getResources().getDisplayMetrics());
+
+			LayoutParams lp = new LayoutParams(px,px,(int)event.getX()-iv_drag_image.getWidth()/2,(int)event.getY()-iv_drag_image.getHeight()/2);
+			iv_drag_image.setLayoutParams(lp);
+
+			}
+			if(event.getAction()==MotionEvent.ACTION_UP){
+			status=0;
+
+			iv_drag_image.setBackgroundColor(Color.TRANSPARENT);
+
+			}
+			return true;
+			}
+			});
 	}
 
 	public void onClick(View v) {
@@ -61,6 +133,7 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
 			break;
 		case R.id.btn_yes:
 			onLayoutVisibility(3);
+			whichLayout = 3;
 			break;
 		case R.id.btn_no:
 			callCamera();
@@ -90,6 +163,9 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
 			
 			
 			break;
+		case R.id.btn_toggle:
+			toggleShade();
+			break;
 
 		}
 	}
@@ -112,6 +188,7 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
 		}
 		if (requestCode == 2 && data!=null) {
 			onLayoutVisibility(2);
+			whichLayout = 2;
 			Bundle extras = data.getExtras();
 			Bitmap thePic = extras.getParcelable("data");
 			((ImageView) findViewById(R.id.iv_capture_image)).setImageBitmap(thePic);
@@ -248,18 +325,84 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
 					ImageView iv = (ImageView)v1.findViewById(R.id.iv_shade_sample);
 					if(Integer.parseInt( tv.getText().toString().trim())== (i+1)){
 						iv.setBackgroundColor(Color.BLACK);
+						
 					}else{
 						iv.setBackgroundColor(Color.parseColor("#540F38"));
 					}
 				}
 				
-				String val = tv.getText().toString().trim();
+				int val = Integer.parseInt(tv.getText().toString().trim());
 				System.out.println("!!! "+val);
 				if(callFrom == 1){
-					app.setBeforeSessionShadeValue(Integer.parseInt(val));
+					app.setBeforeSessionShadeValue(val);
 				}else{
-					app.setAfterSessionShadeValue(Integer.parseInt(val));
+					app.setAfterSessionShadeValue(val);
 				}
+				
+				val = val-1;
+				
+				if(val==0){
+					iv_drag_image.setImageResource(R.drawable.shade_1);	
+					
+				}else if(val==1){
+					iv_drag_image.setImageResource(R.drawable.shade_2);	
+					
+				}else if(val==2){
+					iv_drag_image.setImageResource(R.drawable.shade_3);	
+					
+				}else if(val==3){
+					iv_drag_image.setImageResource(R.drawable.shade_4);	
+					
+				}else if(val==4){
+					iv_drag_image.setImageResource(R.drawable.shade_5);	
+					
+				}else if(val==5){
+					iv_drag_image.setImageResource(R.drawable.shade_6);	
+					
+				}else if(val==6){
+					iv_drag_image.setImageResource(R.drawable.shade_7);
+					
+				}else if(val==7){
+					iv_drag_image.setImageResource(R.drawable.shade_8);	
+					
+				}else if(val==8){
+					iv_drag_image.setImageResource(R.drawable.shade_9);	
+					
+				}else if(val==9){
+					iv_drag_image.setImageResource(R.drawable.shade_10);
+					
+				}else if(val==10){
+					iv_drag_image.setImageResource(R.drawable.shade_11);
+					
+				}else if(val==11){
+					iv_drag_image.setImageResource(R.drawable.shade_12);
+					
+				}else if(val==12){
+					iv_drag_image.setImageResource(R.drawable.shade_13);
+					
+				}else if(val==13){
+					iv_drag_image.setImageResource(R.drawable.shade_14);
+					
+				}else if(val==14){
+					iv_drag_image.setImageResource(R.drawable.shade_15);
+					
+				}else if(val==15){
+					iv_drag_image.setImageResource(R.drawable.shade_16);
+					
+				}else if(val==16){
+					iv_drag_image.setImageResource(R.drawable.shade_17);
+					
+				}else if(val==17){
+					iv_drag_image.setImageResource(R.drawable.shade_18);
+					
+				}else if(val==18){
+					iv_drag_image.setImageResource(R.drawable.shade_19);
+					
+				}else if(val==19){
+					iv_drag_image.setImageResource(R.drawable.shade_20);
+					
+				}
+				
 				
 			}
 		});
@@ -273,6 +416,43 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
         setResult(RESULT_OK,returnIntent);     
          finish();
 		
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		onLayoutVisibility(whichLayout);
+		
+	}
+	
+	public void toggleShade(){
+		if(!flag){
+			System.out.println("!! here1");
+			flag = true;
+			hs_view.setVisibility(View.GONE);
+		}else{
+			System.out.println("!! here2");
+			flag = false;
+			hs_view.setVisibility(View.VISIBLE);
+		}
+	}
+	
+private void getDimensions() {
+		
+		mLayoutWidth = rl_drag.getWidth();
+		mLayoutHeight = rl_drag.getHeight();
+		
+		mLayoutLeft = rl_drag.getRight() - mLayoutWidth;
+		mLayoutTop = rl_drag.getBottom() - mLayoutHeight;
+		
+		mLayoutRight = rl_drag.getLeft() + mLayoutWidth;
+		mLayoutBottom = rl_drag.getTop() + mLayoutHeight;
+		
+	}
+ 
+	public boolean onTouch(View arg0, MotionEvent arg1) {
+ 
+		return false;
 	}
 
 }

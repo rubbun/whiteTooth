@@ -123,7 +123,8 @@
                 android:layout_alignParentTop="true"
                 android:orientation="horizontal" >
 
-                <LinearLayout
+                <RelativeLayout
+                    android:id="@+id/rl_drag"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.65"
@@ -135,7 +136,21 @@
                         android:layout_height="fill_parent"
                         android:scaleType="fitXY"
                         android:src="@drawable/logo" />
-                </LinearLayout>
+
+                    <AbsoluteLayout
+                        android:id="@+id/absLayout"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent" >
+
+                        <ImageView
+                            android:id="@+id/iv_drag_image"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_centerInParent="true"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/logo" />
+                    </AbsoluteLayout>
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -192,18 +207,29 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_shade_row"
                 android:layout_width="match_parent"
-                android:layout_height="85dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="60dp"
-                android:background="#540F38"
+                android:gravity="center"
                 android:orientation="vertical"
-                android:paddingBottom="3dp"
-                android:paddingTop="3dp" >
+                android:paddingTop="3dp"
+                android:visibility="visible" >
+
+                <Button
+                    android:id="@+id/btn_toggle"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:background="#540F38"
+                    android:text="Show"
+                    android:textColor="#FFFFFF" />
 
                 <HorizontalScrollView
-                    android:layout_height="match_parent"
-                    android:layout_width="match_parent" >
+                    android:id="@+id/hs_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:background="#540F38"
+                    android:visibility="visible" >
 
                     <LinearLayout
                         android:id="@+id/ll_shade_sample"
@@ -212,7 +238,6 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal" >
                     </LinearLayout>
-
                 </HorizontalScrollView>
             </LinearLayout>
         </RelativeLayout>
