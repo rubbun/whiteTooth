@@ -69,7 +69,7 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
 		hs_view = (HorizontalScrollView)findViewById(R.id.hs_view);
 		onLayoutVisibility(1);
 		whichLayout = 1;
-		for(int i=0;i<20; i++){
+		for(int i=0;i<15; i++){
 			ll_shade_sample.addView(addtoothShade(i));
 		}
 		
@@ -263,21 +263,6 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
 		}else if(i==14){
 			imageView.setImageResource(R.drawable.shade_15);
 			tv.setText("15");
-		}else if(i==15){
-			imageView.setImageResource(R.drawable.shade_16);
-			tv.setText("16");
-		}else if(i==16){
-			imageView.setImageResource(R.drawable.shade_17);
-			tv.setText("17");
-		}else if(i==17){
-			imageView.setImageResource(R.drawable.shade_18);
-			tv.setText("18");
-		}else if(i==18){
-			imageView.setImageResource(R.drawable.shade_19);
-			tv.setText("19");
-		}else if(i==19){
-			imageView.setImageResource(R.drawable.shade_20);
-			tv.setText("20");
 		}
 		
 		imageView.setOnClickListener(new OnClickListener() {
@@ -342,30 +327,13 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
 				}else if(val==14){
 					iv_drag_image.setImageResource(R.drawable.shade_15);
 					
-				}else if(val==15){
-					iv_drag_image.setImageResource(R.drawable.shade_16);
-					
-				}else if(val==16){
-					iv_drag_image.setImageResource(R.drawable.shade_17);
-					
-				}else if(val==17){
-					iv_drag_image.setImageResource(R.drawable.shade_18);
-					
-				}else if(val==18){
-					iv_drag_image.setImageResource(R.drawable.shade_19);
-					
-				}else if(val==19){
-					iv_drag_image.setImageResource(R.drawable.shade_20);
-					
 				}
 				String m = "";
-				if(val+1 > 10){
-					m = "Based on the current tooth shade we recommend a 20-minute whitening session";
+				if(val+1 > 5){
+					m = "You should whiten teeth";
 					
-				}else if((((val+1) == 9)) || (((val+1) == 10))){
-					m =	"Based on the current tooth shade we recommend a 30-minute whitening session";
-				}else if((val+1)<=8){
-					m ="Your teeth look fantastic based on the current tooth shade. No whitening is need. Check again after 30	days";
+				}else {
+					m = "No whiten needed";
 				}
 				 new AlertDialog.Builder(ToothShadeActivity.this)
 					.setMessage(m)
