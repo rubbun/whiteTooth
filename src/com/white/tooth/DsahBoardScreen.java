@@ -25,8 +25,8 @@ import com.white.tooth.util.Purchase;
 
 public class DsahBoardScreen extends BaseActivity implements OnClickListener,OnToothShadeDialogClickListener {
 	private static final String TAG = "paymentExample";
-	private LinearLayout ll_tutorial, ll_history, ll_refill, ll_session, ll_live_support;
-	private TextView tv_tutorial, tv_history, tv_session, tv_refill, tv_live_support;
+	private LinearLayout ll_tutorial, ll_history, ll_refill, ll_session, ll_live_support, ll_shade;
+	private TextView tv_tutorial, tv_history, tv_session, tv_refill, tv_live_support, tv_shade;
 	private Intent i;
 
 	boolean mIsPremium = false;
@@ -73,6 +73,9 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener,OnT
 
 		tv_live_support = (TextView) findViewById(R.id.tv_live_support);
 		tv_live_support.setTypeface(agecyTypeface());
+		
+		tv_shade = (TextView) findViewById(R.id.tv_shade);
+		tv_shade.setTypeface(agecyTypeface());
 
 		ll_tutorial = (LinearLayout) findViewById(R.id.ll_tutorial);
 		ll_tutorial.setOnClickListener(this);
@@ -88,7 +91,10 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener,OnT
 
 		ll_live_support = (LinearLayout) findViewById(R.id.ll_live_support);
 		ll_live_support.setOnClickListener(this);
-
+		
+		ll_shade = (LinearLayout)findViewById(R.id.ll_shade);
+		ll_shade.setOnClickListener(this);
+		
 		mPurchaseFinishedListener = new OnIabPurchaseFinishedListener() {
 
 			@Override
@@ -162,10 +168,11 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener,OnT
 			
 			break;
 		case R.id.ll_session:
+			Intent i1 = new Intent(getApplicationContext(), TimerActivity.class);
+			startActivity(i1);
+			/*new DlgToothShade(this, this).show();
 			
-			new DlgToothShade(this, this).show();
-			
-			FlurryAgent.logEvent("StartSessionData");
+			FlurryAgent.logEvent("StartSessionData");*/
 
 			break;
 		case R.id.ll_refill:
@@ -230,6 +237,13 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener,OnT
 			i = new Intent(getApplicationContext(), SmsActivity.class);
 			startActivity(i);
 			break;
+			
+		case R.id.ll_shade:
+			
+			new DlgToothShade(this, this).show();
+			
+			FlurryAgent.logEvent("ToothShadeData");
+			break;
 		}
 	}
 
@@ -254,8 +268,8 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener,OnT
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		
 		if(requestCode == 201){
-			Intent i1 = new Intent(getApplicationContext(), TimerActivity.class);
-			startActivity(i1);
+			/*Intent i1 = new Intent(getApplicationContext(), TimerActivity.class);
+			startActivity(i1);*/
 		}
 		
 		if (mHelper == null)
@@ -290,8 +304,8 @@ public class DsahBoardScreen extends BaseActivity implements OnClickListener,OnT
 
 	@Override
 	public void onNoButtonClick() {
-		Intent i1 = new Intent(getApplicationContext(), TimerActivity.class);
-		startActivity(i1);
+		/*Intent i1 = new Intent(getApplicationContext(), TimerActivity.class);
+		startActivity(i1);*/
 		
 	}
 

@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#5b9bd5"
+    android:background="@drawable/main_bg"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -46,7 +46,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:scaleType="fitXY"
-                android:src="@drawable/logo" />
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -110,7 +110,6 @@
         android:id="@+id/ll_shade"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:background="#486995"
         android:orientation="vertical" >
 
         <RelativeLayout
@@ -137,19 +136,16 @@
                         android:scaleType="fitXY"
                         android:src="@drawable/logo" />
 
-                    <AbsoluteLayout
-                        android:id="@+id/absLayout"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent" >
+                   
 
                         <ImageView
                             android:id="@+id/iv_drag_image"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
+                            android:layout_width="120dp"
+                            android:layout_height="140dp"
                             android:layout_centerInParent="true"
                             android:scaleType="fitXY"
                             android:src="@drawable/logo" />
-                    </AbsoluteLayout>
+                   
                 </RelativeLayout>
 
                 <LinearLayout
@@ -220,15 +216,15 @@
                     android:id="@+id/btn_toggle"
                     android:layout_width="80dp"
                     android:layout_height="40dp"
-                    android:background="#540F38"
-                    android:text="Show"
-                    android:textColor="#FFFFFF" />
+                     android:background="@android:color/transparent"
+                   android:visibility="gone"
+                     android:textColor="#FFFFFF" />
 
                 <HorizontalScrollView
                     android:id="@+id/hs_view"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    android:background="#540F38"
+                    android:background="@android:color/transparent"
                     android:visibility="visible" >
 
                     <LinearLayout

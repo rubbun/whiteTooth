@@ -3,8 +3,8 @@ package com.white.tooth;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import android.content.ClipData;
-import android.content.ClipDescription;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -14,11 +14,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.widget.AbsoluteLayout;
 import android.widget.AbsoluteLayout.LayoutParams;
@@ -47,7 +45,6 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
 	boolean TOUCH_STATUS=false;
 	 private static final String IMAGEVIEW_TAG = "Android Logo";
 	 String msg="";
-	 private AbsoluteLayout aLayout;
 	 private int status=0;
 
 	@Override
@@ -83,47 +80,11 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
 		iv_drag_image = (ImageView)findViewById(R.id.iv_drag_image);
 		iv_drag_image.setTag(IMAGEVIEW_TAG);
 		rl_drag =(RelativeLayout)findViewById(R.id.rl_drag);
-		aLayout= (AbsoluteLayout)findViewById(R.id.absLayout);
-		getDimensions();
+		
+	
 		
 
-		iv_drag_image.setOnTouchListener(new OnTouchListener() {
 
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-
-			status=1;
-			Log.i("ImageStatus",""+status);
-			//img.setBackgroundColor(Color.WHITE);
-
-			return false;
-			}
-			});
-			aLayout.setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-			// TODO Auto-generated method stub
-			Log.i("touch",""+event);
-
-			if(status==1) // any event from down and move
-			{
-			@SuppressWarnings("deprecation")
-			int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 100, getResources().getDisplayMetrics());
-
-			LayoutParams lp = new LayoutParams(px,px,(int)event.getX()-iv_drag_image.getWidth()/2,(int)event.getY()-iv_drag_image.getHeight()/2);
-			iv_drag_image.setLayoutParams(lp);
-
-			}
-			if(event.getAction()==MotionEvent.ACTION_UP){
-			status=0;
-
-			iv_drag_image.setBackgroundColor(Color.TRANSPARENT);
-
-			}
-			return true;
-			}
-			});
 	}
 
 	public void onClick(View v) {
@@ -152,7 +113,11 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
 			if(callFrom==2){
 				if(app.getAfterSessionShadeValue()!=0){
 					
-					new DlgToothShadeCompare(this, this).show();
+					if(app.getBeforeSessionShadeValue()>app.getAfterSessionShadeValue()){
+						new DlgToothShadeCompare(this, this).show();
+					}
+					
+					
 					/*Intent returnIntent = new Intent();
 			        setResult(RESULT_OK,returnIntent);     
 			         finish();*/
@@ -320,16 +285,7 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
 			@Override
 			public void onClick(View arg0) {
 				
-				for(int i=0; i<ll_shade_sample.getChildCount(); i++){
-					View v1 = ll_shade_sample.getChildAt(i);
-					ImageView iv = (ImageView)v1.findViewById(R.id.iv_shade_sample);
-					if(Integer.parseInt( tv.getText().toString().trim())== (i+1)){
-						iv.setBackgroundColor(Color.BLACK);
-						
-					}else{
-						iv.setBackgroundColor(Color.parseColor("#540F38"));
-					}
-				}
+				
 				
 				int val = Integer.parseInt(tv.getText().toString().trim());
 				System.out.println("!!! "+val);
@@ -402,7 +358,26 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
 					iv_drag_image.setImageResource(R.drawable.shade_20);
 					
 				}
-				
+				String m = "";
+				if(val+1 > 10){
+					m = "Based on the current tooth shade we recommend a 20-minute whitening session";
+					
+				}else if((((val+1) == 9)) || (((val+1) == 10))){
+					m =	"Based on the current tooth shade we recommend a 30-minute whitening session";
+				}else if((val+1)<=8){
+					m ="Your teeth look fantastic based on the current tooth shade. No whitening is need. Check again after 30	days";
+				}
+				 new AlertDialog.Builder(ToothShadeActivity.this)
+					.setMessage(m)
+					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface arg0, int arg1) {
+							arg0.dismiss();
+							
+						}
+					})
+					.show();
 				
 			}
 		});
@@ -426,33 +401,18 @@ public class ToothShadeActivity extends BaseActivity implements OnToothShadeComp
 	}
 	
 	public void toggleShade(){
-		if(!flag){
+		/*if(!flag){
 			System.out.println("!! here1");
 			flag = true;
 			hs_view.setVisibility(View.GONE);
+			btn_toggle.setText("Show");
 		}else{
 			System.out.println("!! here2");
 			flag = false;
 			hs_view.setVisibility(View.VISIBLE);
-		}
+			btn_toggle.setText("Hide");
+		}*/
 	}
 	
-private void getDimensions() {
-		
-		mLayoutWidth = rl_drag.getWidth();
-		mLayoutHeight = rl_drag.getHeight();
-		
-		mLayoutLeft = rl_drag.getRight() - mLayoutWidth;
-		mLayoutTop = rl_drag.getBottom() - mLayoutHeight;
-		
-		mLayoutRight = rl_drag.getLeft() + mLayoutWidth;
-		mLayoutBottom = rl_drag.getTop() + mLayoutHeight;
-		
-	}
- 
-	public boolean onTouch(View arg0, MotionEvent arg1) {
- 
-		return false;
-	}
 
 }
